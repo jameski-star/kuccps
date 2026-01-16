@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>KUCCPS Eligibility Checker 2025/2026 | Calculate Cluster Points & Courses</title>
+    <meta name="description" content="Instantly check your eligibility for KUCCPS degree programmes. Enter your KCSE cluster points to find courses you qualify for in Public and Private Universities in Kenya. Auto-load 2025/2026 database.">
+    <meta name="keywords" content="KUCCPS, Cluster Points Calculator, KUCCPS Eligibility, Kenya University Placement, KCSE 2025 results, Course Cutoff Points, University of Nairobi, Kenyatta University, JKUAT, Degree Programmes, Career Guidance Kenya, Kuccps.xlsx">
+    <meta name="author" content="Chacha">
+    <meta name="robots" content="index, follow">
+
+    <meta name="geo.region" content="KE">
+    <meta name="geo.placename" content="Nairobi">
+    
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="KUCCPS Eligibility Checker - Find Your Dream Course">
+    <meta property="og:description" content="Don't guess! Use Chacha's automated KUCCPS Checker to see exactly which university degrees you qualify for based on your cluster points.">
+    <meta property="og:site_name" content="KUCCPS Auto-Loader">
+    <meta property="og:locale" content="en_KE">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="KUCCPS Course Checker | Free Eligibility Tool">
+    <meta name="twitter:description" content="Check your university eligibility instantly. Supports Excel auto-loading. Built by Chacha.">
+    
+    <meta name="theme-color" content="#1a237e">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>KUCCPS Eligibility Checker</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    
+    <style>
+        :root {
+            --primary: #1a237e;
+            --secondary: #0288d1;
+            --bg: #f0f2f5;
+            --text: #37474f;
+            --success: #00c853;
+            --error: #d32f2f;
+            --card: #ffffff;
+            --border-radius: 12px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif; }
+        
+        body { 
+            background: var(--bg); 
+            color: var(--text); 
+            min-height: 100vh; 
+            display: flex; 
+            flex-direction: column; 
+        }
+
+        /* Responsive Header */
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 1.5rem 1rem;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        header h1 { font-size: 1.8rem; margin-bottom: 5px; }
+        header p { opacity: 0.9; font-size: 0.95rem; }
+
+        /* Main Grid Layout */
+        .container {
+            max-width: 1400px;
+            margin: 20px auto;
+            padding: 0 15px;
+            flex: 1;
+            display: grid;
+            grid-template-columns: 320px 1fr; /* Desktop: Sidebar + Content */
+            gap: 25px;
+            width: 100%;
+        }
+
+        /* --- CARD STYLES --- */
+        .card-style {
+            background: var(--card);
+            border-radius: var(--border-radius);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.04);
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+
+        /* --- SIDEBAR CONTROLS --- */
+        .controls {
+            padding: 25px;
+            height: fit-content;
+            position: sticky;
+            top: 20px;
+        }
+
+        .control-group { margin-bottom: 20px; }
+        .control-group label { display: block; font-weight: 700; margin-bottom: 8px; color: var(--primary); font-size: 0.9rem; }
+        
+        /* Touch-friendly Inputs */
+        .control-group input, .control-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem; /* Prevents zoom on iPhone */
+            background: #fafafa;
+            transition: all 0.3s;
+        }
+        .control-group input:focus, .control-group select:focus {
+            border-color: var(--secondary);
+            background: #fff;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(2, 136, 209, 0.1);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 1rem;
+            margin-bottom: 10px;
+            color: white;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .btn:active { transform: scale(0.98); }
+        .btn-check { background: var(--secondary); box-shadow: 0 4px 10px rgba(2, 136, 209, 0.3); }
+        .btn-check:hover { background: #0277bd; }
+
+        /* --- STATUS BOX --- */
+        .status-box {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            line-height: 1.4;
+        }
+        .status-loading { background: #e3f2fd; color: #0d47a1; }
+        .status-success { background: #e8f5e9; color: #1b5e20; }
+        .status-error { background: #ffebee; color: #b71c1c; }
+
+        /* --- RESULTS AREA --- */
+        .results-area {
+            padding: 0; 
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            height: 80vh; 
+        }
+
+        /* Stats Bar */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1px;
+            background: #eee;
+            border-bottom: 1px solid #eee;
+        }
+        .stat-item {
+            background: white;
+            padding: 20px 10px;
+            text-align: center;
+        }
+        .stat-num { font-size: 1.6rem; font-weight: 800; color: var(--primary); display: block; line-height: 1.2; }
+        .stat-desc { font-size: 0.75rem; color: #78909c; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
+
+        /* Table container */
+        .table-wrapper {
+            overflow-y: auto;
+            overflow-x: auto; /* Allows horizontal scroll */
+            flex: 1;
+            background: white;
+            -webkit-overflow-scrolling: touch; 
+        }
+
+        table { width: 100%; border-collapse: collapse; min-width: 600px; /* Forces scroll on small screens */ }
+        
+        thead th { 
+            background: #f8f9fa; 
+            padding: 15px; 
+            text-align: left; 
+            font-weight: 700; 
+            color: var(--primary); 
+            position: sticky; 
+            top: 0; 
+            z-index: 10;
+            border-bottom: 2px solid #eee;
+            font-size: 0.9rem;
+            white-space: nowrap;
+        }
+        
+        tbody td { 
+            padding: 12px 15px; 
+            border-bottom: 1px solid #f0f0f0; 
+            font-size: 0.95rem;
+            color: #444;
+        }
+        tbody tr:hover { background-color: #f5faff; }
+
+        .code { font-family: 'Consolas', monospace; color: #546e7a; font-weight: bold; }
+        .eligible-row { background-color: #f0fdf4; }
+        .eligible-badge { 
+            background: #e8f5e9; color: #2e7d32; 
+            padding: 4px 10px; border-radius: 20px; 
+            font-size: 0.8rem; font-weight: 700;
+            display: inline-block; white-space: nowrap;
+        }
+        .missed-badge {
+            background: #f5f5f5; color: #9e9e9e;
+            padding: 4px 10px; border-radius: 20px;
+            font-size: 0.8rem;
+            display: inline-block; white-space: nowrap;
+        }
+
+        /* --- FOOTER --- */
+        footer {
+            background: #263238;
+            color: #cfd8dc;
+            text-align: center;
+            padding: 25px 15px;
+            margin-top: auto;
+            font-size: 0.9rem;
+        }
+        footer strong { color: white; }
+        footer a { color: var(--secondary); text-decoration: none; display: inline-block; margin-top: 5px;}
+
+        /* --- MEDIA QUERIES --- */
+        
+        /* Tablet & Mobile (Below 992px) */
+        @media (max-width: 992px) {
+            .container {
+                grid-template-columns: 1fr; 
+                gap: 20px;
+                height: auto;
+                margin-top: 10px;
+            }
+            
+            .controls {
+                position: static;
+                width: 100%;
+            }
+
+            .results-area {
+                height: 600px;
+            }
+        }
+
+        /* Mobile Phones (Below 600px) */
+        @media (max-width: 600px) {
+            header h1 { font-size: 1.5rem; }
+            
+            .container { padding: 0 10px; margin-top: 10px; }
+            
+            .controls { padding: 20px 15px; }
+
+            .stats-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            .stat-item { padding: 15px 5px; }
+            .stat-num { font-size: 1.3rem; }
+            .stat-desc { font-size: 0.65rem; }
+
+            /* Mobile Table Adjustments */
+            tbody td { padding: 10px; font-size: 0.85rem; }
+            thead th { padding: 10px; }
+            
+            /* Ensured CODE column is visible */
+            th:nth-child(1), td:nth-child(1) {
+                display: table-cell !important;
+                min-width: 80px; /* Ensure it's not too squashed */
+            }
+        }
+        
+        #manualUpload { display: none; margin-top: 10px; }
+        #errorControls { display: none; margin-top: 15px; border-top: 1px solid #eee; padding-top: 15px; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1><i class="fas fa-graduation-cap"></i> KUCCPS Checker</h1>
+        <p>Check<strong> Your Course Faster</strong></p>
+    </header>
+
+    <div class="container">
+        <aside class="controls card-style">
+            
+            <div id="statusBox" class="status-box status-loading">
+                <i class="fas fa-circle-notch fa-spin"></i>
+                <span>Connecting to file...</span>
+            </div>
+
+            <div id="errorControls">
+                <p style="font-size:0.9rem; color:#666; margin-bottom:10px; line-height:1.4;">
+                    <i class="fas fa-info-circle"></i> <strong>Auto-load blocked?</strong><br>
+                    Browsers block local file access. Use a local server or select file manually:
+                </p>
+                <input type="file" id="manualUpload" accept=".xlsx, .xls" onchange="handleManualUpload(this)">
+                <label for="manualUpload" class="btn btn-check" style="background:var(--primary);">
+                    <i class="fas fa-folder-open"></i> Select Kuccps.xlsx
+                </label>
+            </div>
+
+            <div class="control-group">
+                <label><i class="fas fa-star"></i> Your Cluster Points</label>
+                <input type="number" id="points" step="0.001" placeholder="e.g. 35.421">
+            </div>
+
+            <div class="control-group">
+                <label><i class="fas fa-search"></i> Search Course</label>
+                <input type="text" id="search" placeholder="e.g. Medicine, Nairobi...">
+            </div>
+
+            <div class="control-group">
+                <label><i class="fas fa-university"></i> Institution Type</label>
+                <select id="typeFilter">
+                    <option value="all">All Institutions</option>
+                    <option value="public">Public Universities</option>
+                    <option value="private">Private Universities</option>
+                </select>
+            </div>
+
+            <button class="btn btn-check" onclick="updateView()">
+                Check Eligibility
+            </button>
+        </aside>
+
+        <main class="results-area card-style">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <span class="stat-num" id="totalCount">0</span>
+                    <span class="stat-desc">Total</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-num" id="eligibleCount" style="color: var(--success)">-</span>
+                    <span class="stat-desc">Eligible</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-num" id="uniCount" style="color: var(--secondary)">0</span>
+                    <span class="stat-desc">Unis</span>
+                </div>
+            </div>
+
+            <div class="table-wrapper">
+                <table id="dataTable">
+                    <thead>
+                        <tr>
+                            <th>Code</th>
+                            <th>Programme</th>
+                            <th>Institution</th>
+                            <th>Cutoff</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <tr><td colspan="5" style="text-align:center; padding: 3rem; color: #999;">Loading Data...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <footer>
+        <p>Developed & Maintained by <strong>Chacha</strong></p>
+        <p><a href="mailto:jameschacha019@gmail.com"><i class="fas fa-envelope"></i> Email Me</a></p>
+    </footer>
+
+    <script>
+        // === CONFIGURATION ===
+        const TARGET_FILE = 'Kuccps.xlsx';
+        let db = [];
+        
+        // Private Uni Keywords
+        const privateKeywords = ["MOUNT KENYA", "STRATHMORE", "KCA", "DAYSTAR", "USIU", "CATHOLIC", "NAZARENE", "METHODIST", "ZETECH", "RIARA", "MKU", "UEAB", "UZIMA", "PIONEER", "LUKENYA", "RAF", "GRETSA", "KIRIRI"];
+
+        // === AUTO LOADER ===
+        window.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const response = await fetch(TARGET_FILE);
+                if (!response.ok) throw new Error("File fetch failed");
+                const buffer = await response.arrayBuffer();
+                parseExcelData(buffer);
+            } catch (error) {
+                console.warn("Auto-load failed. Waiting for manual upload.");
+                showErrorState();
+            }
+        });
+
+        function showErrorState() {
+            const statusBox = document.getElementById('statusBox');
+            statusBox.className = 'status-box status-error';
+            statusBox.innerHTML = `<i class="fas fa-exclamation-circle"></i> <span>File not loaded automatically.</span>`;
+            
+            document.getElementById('errorControls').style.display = 'block';
+            document.getElementById('tableBody').innerHTML = `
+                <tr><td colspan="5" style="text-align:center; padding: 3rem; color:#888;">
+                    <i class="fas fa-file-excel" style="font-size:3rem; margin-bottom:15px; display:block; opacity:0.3"></i>
+                    Please select <strong>Kuccps.xlsx</strong> manually.
+                </td></tr>`;
+        }
+
+        // === MANUAL UPLOAD ===
+        function handleManualUpload(input) {
+            const file = input.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const data = new Uint8Array(e.target.result);
+                parseExcelData(data);
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        // === PARSER ===
+        function parseExcelData(buffer) {
+            try {
+                const workbook = XLSX.read(buffer, { type: 'array' });
+                const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+                const rows = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+                
+                processRows(rows);
+
+                // Success UI
+                const statusBox = document.getElementById('statusBox');
+                statusBox.className = 'status-box status-success';
+                statusBox.innerHTML = `<i class="fas fa-check-circle"></i> <span>Database Loaded Successfully!</span>`;
+                document.getElementById('errorControls').style.display = 'none';
+                
+                updateView();
+
+            } catch (err) {
+                alert("Error parsing Excel: " + err.message);
+            }
+        }
+
+        function processRows(rows) {
+            db = [];
+            // Simple auto-detect column logic
+            let colMap = { code: 0, inst: 1, name: 2, cut: 3 };
+            
+            // Try to find header row
+            let headerIdx = -1;
+            for(let i=0; i<Math.min(rows.length, 15); i++) {
+                const s = rows[i].join(' ').toUpperCase();
+                if(s.includes("CODE") && (s.includes("NAME") || s.includes("PROGRAMME"))) {
+                    headerIdx = i;
+                    // Map cols based on index
+                    rows[i].forEach((cell, idx) => {
+                        const val = String(cell).toUpperCase();
+                        if(val.includes("CODE")) colMap.code = idx;
+                        else if(val.includes("INST")) colMap.inst = idx;
+                        else if(val.includes("NAME") || val.includes("PROG")) colMap.name = idx;
+                        else if(val.includes("CUT") || val.includes("2023")) colMap.cut = idx;
+                    });
+                    break;
+                }
+            }
+
+            const startRow = headerIdx === -1 ? 0 : headerIdx + 1;
+
+            for(let i=startRow; i<rows.length; i++) {
+                const row = rows[i];
+                if(!row || !row[colMap.name]) continue;
+
+                let cut = parseFloat(row[colMap.cut]);
+                if(isNaN(cut)) cut = 0;
+
+                db.push({
+                    c: String(row[colMap.code] || "-"),
+                    n: String(row[colMap.name]).trim(),
+                    i: String(row[colMap.inst] || "Unknown"),
+                    cut: cut
+                });
+            }
+        }
+
+        // === VIEW LOGIC ===
+        function isPrivate(instName) {
+            return privateKeywords.some(k => instName.toUpperCase().includes(k));
+        }
+
+        function updateView() {
+            const points = parseFloat(document.getElementById('points').value);
+            const search = document.getElementById('search').value.toLowerCase();
+            const typeFilter = document.getElementById('typeFilter').value;
+            const tbody = document.getElementById('tableBody');
+            
+            tbody.innerHTML = '';
+            
+            // FILTER
+            let filtered = db.filter(row => {
+                const fullText = (row.c + " " + row.n + " " + row.i).toLowerCase();
+                const matchesSearch = fullText.includes(search);
+                const isPriv = isPrivate(row.i);
+                const matchesType = typeFilter === 'all' || 
+                                  (typeFilter === 'public' && !isPriv) ||
+                                  (typeFilter === 'private' && isPriv);
+                return matchesSearch && matchesType;
+            });
+
+            // SORT
+            const hasPoints = !isNaN(points);
+            if (hasPoints) {
+                filtered.sort((a, b) => {
+                    const aElig = points >= a.cut ? 1 : 0;
+                    const bElig = points >= b.cut ? 1 : 0;
+                    return (bElig - aElig) || (b.cut - a.cut);
+                });
+            }
+
+            // STATS
+            let eligibleCount = 0;
+            const uniqueUnis = new Set();
+            
+            // RENDER (Batching not needed for <5000 rows usually, but let's limit render)
+            const renderLimit = 200; 
+            
+            filtered.forEach((row, idx) => {
+                uniqueUnis.add(row.i);
+                const isEligible = hasPoints && points >= row.cut;
+                if(isEligible) eligibleCount++;
+
+                if(idx < renderLimit) {
+                    const tr = document.createElement('tr');
+                    if(isEligible) tr.classList.add('eligible-row');
+                    
+                    const badge = isEligible 
+                        ? `<span class="eligible-badge"><i class="fas fa-check"></i> Eligible</span>`
+                        : (hasPoints ? `<span class="missed-badge">Missed</span>` : `<span style="color:#ccc">-</span>`);
+
+                    tr.innerHTML = `
+                        <td class="code">${row.c}</td>
+                        <td><strong>${row.n}</strong></td>
+                        <td style="font-size:0.85rem; color:#666;">${row.i}</td>
+                        <td style="font-weight:700;">${row.cut > 0 ? row.cut.toFixed(3) : 'N/A'}</td>
+                        <td>${badge}</td>
+                    `;
+                    tbody.appendChild(tr);
+                }
+            });
+
+            if(filtered.length === 0 && db.length > 0) {
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:2rem;">No courses found matching filters.</td></tr>`;
+            } else if (filtered.length > renderLimit) {
+                 const row = document.createElement('tr');
+                 row.innerHTML = `<td colspan="5" style="text-align:center; padding:10px; color:#888; font-style:italic;">... and ${filtered.length - renderLimit} more results ...</td>`;
+                 tbody.appendChild(row);
+            }
+
+            document.getElementById('totalCount').innerText = filtered.length;
+            document.getElementById('eligibleCount').innerText = hasPoints ? eligibleCount : '-';
+            document.getElementById('uniCount').innerText = uniqueUnis.size;
+        }
+
+        // Enter Key Support
+        document.addEventListener('keypress', e => { if(e.key === 'Enter') updateView(); });
+    </script>
+</body>
+</html>
